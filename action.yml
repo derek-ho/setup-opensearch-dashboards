@@ -63,6 +63,7 @@ runs:
       run: |
         echo "::set-output name=osd-version::$(jq -r '.opensearchDashboards.version | split(".") | .[:2] | join(".")' package.json)"
         echo "::set-output name=osd-x-version::$(jq -r '.opensearchDashboards.version | split(".") | .[0]' package.json).x"
+        echo "::set-output name=plugin-version::$(jq -r '.opensearchDashboardsVersion' opensearch_dashboards.json)"
       working-directory: ${{ steps.determine-plugin-directory.outputs.plugin-directory }}
       shell: bash
 
@@ -107,7 +108,7 @@ runs:
       uses: peternied/download-file@v2
       if: ${{ inputs.install_zip == 'true' && runner.os == 'Windows' }}
       with:
-        url: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${{ env.osd-version}}/latest/windows/x64/zip/dist/opensearch-dashboards/opensearch-dashboards-min-${{ env.osd-version}}-windows-x64.zip
+        url: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${{ steps.osd-version.outputs.plugin-version }}/latest/windows/x64/zip/dist/opensearch-dashboards/opensearch-dashboards-min-${{ steps.osd-version.outputs.plugin-version }}-windows-x64.zip
         target: OpenSearch-Dashboards/build/
 
 
@@ -115,7 +116,7 @@ runs:
       uses: peternied/download-file@v2
       if: ${{ inputs.install_zip == 'true' && runner.os == 'Linux' }}
       with:
-        url: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${{ env.osd-version}}/latest/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-min-${{ env.osd-version}}-linux-x64.tar.gz
+        url: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${{ steps.osd-version.outputs.plugin-version }}/latest/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-min-${{ steps.osd-version.outputs.plugin-version }}-linux-x64.tar.gz
         target: OpenSearch-Dashboards/build/
 
     # Extract downloaded zip
@@ -130,8 +131,8 @@ runs:
     - name: Extract downloaded zip
       if: ${{ inputs.install_zip == 'true' && runner.os == 'Windows' }}
       run: |
-        tar -xzf opensearch-dashboards-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip
-        del opensearch-dashboards-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip
+        tar -xzf opensearch-dashboards-min-${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT-windows-x64-latest.zip
+        del opensearch-dashboards-min-${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT-windows-x64-latest.zip
       working-directory: OpenSearch-Dashboards/build/
       shell: pwsh
 
@@ -145,6 +146,6 @@ runs:
     - name: Install the plugin zip
       if: ${{ inputs.install_zip == 'true' }}
       run: | 
-        opensearch-dashboards-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT-linux-x64/bin/opensearch-dashboards-plugin install file:$(pwd)/plugins/security-dashboards-plugin/build/security-dashboards-${{env.PLUGIN_VERSION}}.zip
+        opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT-linux-x64/bin/opensearch-dashboards-plugin install file:$(pwd)/plugins/security-dashboards-plugin/build/security-dashboards-${{env.PLUGIN_VERSION}}.zip
       working-directory: OpenSearch-Dashboards/build/
       shell: bash
