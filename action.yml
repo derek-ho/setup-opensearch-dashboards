@@ -1,5 +1,5 @@
-name: 'Install Dashboards with Plugin'
-description: 'Installs OpenSearch Dashboard with a plugin from github, then checks out the correct dashboards version for the plugin, configures npm/yarn, and bootstraps Dashboards'
+name: 'Starts Dashboards with Plugin'
+description: 'Installs OpenSearch Dashboard with a plugin from github, then checks out the correct dashboards version for the plugin, configures npm/yarn, bootstraps Dashboards, and starts the instance'
 
 inputs:
   plugin_name:
@@ -12,6 +12,10 @@ inputs:
 
   plugin_repo:
     description: 'The repo of the plugin to use. Leave empty to indicate the repo which is running this action'
+    required: false
+
+  opensearch_dashboards_yml:
+    description: 'The file to replace opensearch_dashboards.yml. Leave empty to use the default'
     required: false
 
   plugin_branch:
@@ -148,4 +152,18 @@ runs:
       run: | 
         opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT-linux-x64/bin/opensearch-dashboards-plugin install file:$(pwd)/plugins/security-dashboards-plugin/build/security-dashboards-${{env.PLUGIN_VERSION}}.zip
       working-directory: OpenSearch-Dashboards/build/
+      shell: bash
+
+    - name: Replace opensearch_dashboards.yml file if applicable binary
+      if: ${{ inputs.opensearch_dashboards_yml != '' && inputs.install_zip == 'true' }}
+      run: |
+          mv ${{ inputs.opensearch_dashboards_yml }} ./opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT-linux-x64/config/opensearch_dashboards.yml
+      working-directory: OpenSearch-Dashboards/build/
+      shell: bash
+
+    - name: Replace opensearch_dashboards.yml file if applicable dev
+      if: ${{ inputs.opensearch_dashboards_yml != '' && inputs.install_zip != 'true' }}
+      run: |
+          mv ${{ inputs.opensearch_dashboards_yml }} ./config/opensearch_dashboards.yml
+      working-directory: OpenSearch-Dashboards/
       shell: bash
