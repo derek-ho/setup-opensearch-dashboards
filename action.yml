@@ -39,11 +39,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - id: determine-dashboards-directory-zip-install
-      if: ${{ inputs.install_zip == 'true' }}
-      run: echo "dashboards-directory=opensearch-dashboards-${{ env.OPENSEARCH_VERSION }}"  >> $GITHUB_OUTPUT
-      shell: bash
-
     - id: determine-dashboards-directory
       if: ${{ inputs.install_zip != 'true' }}
       run: echo "dashboards-directory=OpenSearch-Dashboards"  >> $GITHUB_OUTPUT
@@ -125,6 +120,11 @@ runs:
         rm -f opensearch-*.tar.gz
       shell: bash
 
+    - id: determine-dashboards-directory-zip-install
+      if: ${{ inputs.install_zip == 'true' }}
+      run: echo "dashboards-directory=opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}-linux-x64"  >> $GITHUB_OUTPUT
+      shell: bash
+
     - name: Build the plugin 
       if: ${{ inputs.install_zip == 'true' }}
       run: |
@@ -135,13 +135,13 @@ runs:
     - name: Install the plugin zip
       if: ${{ inputs.install_zip == 'true' }}
       run: | 
-        opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}-linux-x64/bin/opensearch-dashboards-plugin install file:$(pwd)/OpenSearch-Dashboards/plugins/${{ inputs.plugin_name }}/build/${{ inputs.built_plugin_name }}-${{env.PLUGIN_VERSION}}.zip
+        ${{ steps.determine-dashboards-directory-zip-install.outputs.dashboards-directory }}/bin/opensearch-dashboards-plugin install file:$(pwd)/OpenSearch-Dashboards/plugins/${{ inputs.plugin_name }}/build/${{ inputs.built_plugin_name }}-${{env.PLUGIN_VERSION}}.zip
       shell: bash
 
     - name: Replace opensearch_dashboards.yml file if applicable binary
       if: ${{ inputs.opensearch_dashboards_yml != '' && inputs.install_zip == 'true' }}
       run: |
-          mv ${{ inputs.opensearch_dashboards_yml }} ./OpenSearch-Dashboards/build/opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT-linux-x64/config/opensearch_dashboards.yml
+          mv ${{ inputs.opensearch_dashboards_yml }} ${{ steps.determine-dashboards-directory-zip-install.outputs.dashboards-directory }}/config/opensearch_dashboards.yml
       shell: bash
 
     - name: Replace opensearch_dashboards.yml file if applicable dev
