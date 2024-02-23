@@ -9,6 +9,10 @@ inputs:
   built_plugin_name: 
     description: 'The name of the plugin after building, if doing zip install'
     required: false
+
+  built_plugin_suffix:
+    description: 'The suffix of the plugin after building, if doing zip instll. Leave empty to indicate default OSD build behavior'
+    required: false
   
   install_zip:
     description: 'Whether the setup should be done using the install plugin flow. Leave empty to indicate dev setup. Only applicable for linux for now'
@@ -137,9 +141,15 @@ runs:
       shell: bash
 
     - name: Install the plugin zip
-      if: ${{ inputs.install_zip == 'true' }}
+      if: ${{ inputs.install_zip == 'true' && inputs.built_plugin_suffix == '' }}
       run: | 
         ${{ steps.determine-dashboards-directory-zip-install.outputs.dashboards-directory }}/bin/opensearch-dashboards-plugin install file:$(pwd)/OpenSearch-Dashboards/plugins/${{ inputs.plugin_name }}/build/${{ inputs.built_plugin_name }}-${{env.PLUGIN_VERSION}}.zip
+      shell: bash
+
+    - name: Install the plugin zip
+      if: ${{ inputs.install_zip == 'true' &&  inputs.built_plugin_suffix != '' }}
+      run: | 
+        ${{ steps.determine-dashboards-directory-zip-install.outputs.dashboards-directory }}/bin/opensearch-dashboards-plugin install file:$(pwd)/OpenSearch-Dashboards/plugins/${{ inputs.plugin_name }}/build/${{ inputs.built_plugin_name }}-${{inputs.built_plugin_suffix}}.zip
       shell: bash
 
     - name: Replace opensearch_dashboards.yml file if applicable binary
