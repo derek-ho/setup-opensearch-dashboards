@@ -31,6 +31,10 @@ outputs:
     description: "The directory where the dashboards has been configured"
     value: ${{ steps.determine-dashboards-directory.outputs.dashboards-directory }}
 
+  dashboards-binary-directory:
+    description: "The directory of the dashboards binary that was configured"
+    value: ${{ steps.determine-dashboards-directory-zip-install.outputs.dashboards-directory }}
+
   plugin-directory:
     description: "The directory where the plugin has been configured"
     value: ${{ steps.determine-plugin-directory.outputs.plugin-directory }}
