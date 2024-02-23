@@ -114,6 +114,7 @@ runs:
     - name: Create target directory
       if: ${{ inputs.install_zip == 'true' && runner.os == 'Linux' }}
       run: mkdir -p OpenSearch-Dashboards/build
+      shell: bash
 
     - name: Download OpenSearch for Linux
       uses: peternied/download-file@v2
