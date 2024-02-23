@@ -157,13 +157,11 @@ runs:
     - name: Replace opensearch_dashboards.yml file if applicable binary
       if: ${{ inputs.opensearch_dashboards_yml != '' && inputs.install_zip == 'true' }}
       run: |
-          mv ${{ inputs.opensearch_dashboards_yml }} ./opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT-linux-x64/config/opensearch_dashboards.yml
-      working-directory: OpenSearch-Dashboards/build/
+          mv ${{ inputs.opensearch_dashboards_yml }} ./OpenSearch-Dashboards/build/opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT-linux-x64/config/opensearch_dashboards.yml
       shell: bash
 
     - name: Replace opensearch_dashboards.yml file if applicable dev
       if: ${{ inputs.opensearch_dashboards_yml != '' && inputs.install_zip != 'true' }}
       run: |
-          mv ${{ inputs.opensearch_dashboards_yml }} ./config/opensearch_dashboards.yml
-      working-directory: OpenSearch-Dashboards/
+          mv ${{ inputs.opensearch_dashboards_yml }} ./OpenSearch-Dashboards/config/opensearch_dashboards.yml
       shell: bash
