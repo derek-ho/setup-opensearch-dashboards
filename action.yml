@@ -111,13 +111,16 @@ runs:
         max_attempts: 2
         command: yarn --cwd OpenSearch-Dashboards osd bootstrap --oss --single-version=loose # loose is passed in to ignore version conflicts on cypress version used in OSD and this repo
 
+    - name: Create target directory
+      if: ${{ inputs.install_zip == 'true' && runner.os == 'Linux' }}
+      run: mkdir -p OpenSearch-Dashboards/build
+
     - name: Download OpenSearch for Linux
       uses: peternied/download-file@v2
       if: ${{ inputs.install_zip == 'true' && runner.os == 'Linux' }}
       with:
         url: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${{ steps.osd-version.outputs.plugin-version }}/latest/linux/x64/tar/builds/opensearch-dashboards/dist/opensearch-dashboards-min-${{ steps.osd-version.outputs.plugin-version }}-linux-x64.tar.gz
-        target: build
-      working-directory: OpenSearch-Dashboards
+        target: OpenSearch-Dashboards/build
 
     # Extract downloaded zip
     - name: Extract downloaded tar
