@@ -41,7 +41,7 @@ runs:
   steps:
     - id: determine-dashboards-directory-zip-install
       if: ${{ inputs.install_zip == 'true' }}
-      run: echo "dashboards-directory=OpenSearch-Dashboards/build/opensearch-dashboards-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT-${{runner.os}}-x64"  >> $GITHUB_OUTPUT
+      run: echo "dashboards-directory=opensearch-dashboards-${{ env.OPENSEARCH_VERSION }}"  >> $GITHUB_OUTPUT
       shell: bash
 
     - id: determine-dashboards-directory
@@ -135,7 +135,7 @@ runs:
     - name: Install the plugin zip
       if: ${{ inputs.install_zip == 'true' }}
       run: | 
-        opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT-linux-x64/bin/opensearch-dashboards-plugin install file:$(pwd)/OpenSearch-Dashboards/plugins/${{ inputs.plugin_name }}/build/${{ inputs.built_plugin_name }}-${{env.PLUGIN_VERSION}}.zip
+        opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}/bin/opensearch-dashboards-plugin install file:$(pwd)/OpenSearch-Dashboards/plugins/${{ inputs.plugin_name }}/build/${{ inputs.built_plugin_name }}-${{env.PLUGIN_VERSION}}.zip
       shell: bash
 
     - name: Replace opensearch_dashboards.yml file if applicable binary
