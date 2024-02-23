@@ -135,7 +135,7 @@ runs:
     - name: Install the plugin zip
       if: ${{ inputs.install_zip == 'true' }}
       run: | 
-        opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}/bin/opensearch-dashboards-plugin install file:$(pwd)/OpenSearch-Dashboards/plugins/${{ inputs.plugin_name }}/build/${{ inputs.built_plugin_name }}-${{env.PLUGIN_VERSION}}.zip
+        opensearch-dashboards-${{ steps.osd-version.outputs.plugin-version }}-linux-x64/bin/opensearch-dashboards-plugin install file:$(pwd)/OpenSearch-Dashboards/plugins/${{ inputs.plugin_name }}/build/${{ inputs.built_plugin_name }}-${{env.PLUGIN_VERSION}}.zip
       shell: bash
 
     - name: Replace opensearch_dashboards.yml file if applicable binary
