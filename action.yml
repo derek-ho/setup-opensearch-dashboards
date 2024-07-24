@@ -101,7 +101,7 @@ runs:
       uses: Wandalen/wretry.action@master
       with:
         attempts: 3
-        step: |
+        command: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.tool-versions.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.tool-versions.outputs.yarn_version }}
