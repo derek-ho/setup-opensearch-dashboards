@@ -98,13 +98,15 @@ runs:
         registry-url: 'https://registry.npmjs.org'
 
     - name: Setup Opensearch Dashboards
-      uses: Wandalen/wretry.action@v3.5.0
-      run: |
-        npm uninstall -g yarn
-        echo "Installing yarn ${{ steps.tool-versions.outputs.yarn_version }}"
-        npm i -g yarn@${{ steps.tool-versions.outputs.yarn_version }}
-        yarn cache clean
-        yarn add sha.js
+      uses: Wandalen/wretry.action@master
+      with:
+        attempts: 3
+        step: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ steps.tool-versions.outputs.yarn_version }}"
+          npm i -g yarn@${{ steps.tool-versions.outputs.yarn_version }}
+          yarn cache clean
+          yarn add sha.js
       working-directory: OpenSearch-Dashboards
       shell: bash
 
