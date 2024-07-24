@@ -107,8 +107,7 @@ runs:
           npm i -g yarn@${{ steps.tool-versions.outputs.yarn_version }}
           yarn cache clean
           yarn add sha.js
-      working-directory: OpenSearch-Dashboards
-      shell: bash
+      current_path: OpenSearch-Dashboards
 
     - name: Bootstrap the OpenSearch Dashboard
       uses: nick-fields/retry@v2
