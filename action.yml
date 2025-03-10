@@ -78,10 +78,11 @@ runs:
       working-directory: ${{ steps.determine-plugin-directory.outputs.plugin-directory }}
       shell: bash
 
+    # checkout node 20 upgrade branch
     - id: branch-switch-if-possible
       continue-on-error: true # Defaults onto main if the branch switch doesn't work
       if: ${{ steps.osd-version.outputs.osd-version }}
-      run: git checkout ${{ steps.osd-version.outputs.osd-version }} || git checkout ${{ steps.osd-version.outputs.osd-x-version }}
+      run: git checkout feature/node-2x
       working-directory: ./OpenSearch-Dashboards
       shell: bash
 
